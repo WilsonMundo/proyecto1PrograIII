@@ -12,6 +12,7 @@ import java.util.Queue;
 /**
  *
  * @author WilsonMundo
+ * @author Jefferson Lopez
  */
 public class ArbolBinario {
 

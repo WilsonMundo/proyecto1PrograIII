@@ -11,6 +11,7 @@ import java.util.Iterator;
 /**
  *
  * @author WilsonMundo
+ * @author Jefferson Lopez
  */
 public class RegistroVariablesServicio {
 

@@ -5,15 +5,18 @@
 package Servicio;
 
 import Modelo.ArbolBinario;
+import Modelo.NodoConNivel;
 import Modelo.Pila;
 import Modelo.PilaOperadores;
 import Modelo.Variable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JDesktopPane;
 
 /**
  *
  * @author WilsonMundo
+ * @author Jefferson Lopez
  */
 public class NotacionPolacaServicio {
 
@@ -38,6 +41,7 @@ public class NotacionPolacaServicio {
         this.valoresInOrden = valoresInOrden;
     }
     List<String> valoresInOrden = new ArrayList<>();
+
     public String generaProcesoArbolexpression(String expression, ArrayList<Variable> variables) {
         if ((expression.length() <= 0) || (expression.equals(""))) {
             throw new RuntimeException("la cadena que ingreso esta vacia");
@@ -71,7 +75,18 @@ public class NotacionPolacaServicio {
         return "";
     }
 
-    public double notacionPolacaGeneral(String expression, ArrayList<Variable> variables) {
+    private void RecorreArbolInterno() {
+        String operadorSacado = pilaOperadores.pop();
+        ArbolBinario derecho = arbol.pop();
+        ArbolBinario izquierdo = arbol.pop();
+        ArbolBinario nuevoArbol = new ArbolBinario(operadorSacado);
+        nuevoArbol.setHijoIzquierdo(izquierdo);
+        nuevoArbol.setHijoDerecho(derecho);
+        arbol.push(nuevoArbol);
+
+    }
+
+    public double notacionPolacaGeneral(String expression, ArrayList<Variable> variables, JDesktopPane desktopPanel) {
         if (Helpers.validaciones.ValidaExpressionVacia(expression)) {
             RegistroVariablesServicio variableServicio = new RegistroVariablesServicio();
             Variable variable;
@@ -93,13 +108,7 @@ public class NotacionPolacaServicio {
                             pilaOperadores.push(operador);
                         } else if (pilaOperadores.ValidarParentesisCerrado(operador)) {
                             while (!pilaOperadores.estaVacia() && !pilaOperadores.ValidarParentesis()) {
-                                String operadorSacado = pilaOperadores.pop();
-                                ArbolBinario derecho = arbol.pop();
-                                ArbolBinario izquierdo = arbol.pop();
-                                ArbolBinario nuevoArbol = new ArbolBinario(operadorSacado);
-                                nuevoArbol.setHijoIzquierdo(izquierdo);
-                                nuevoArbol.setHijoDerecho(derecho);
-                                arbol.push(nuevoArbol);
+                                RecorreArbolInterno();
                             }
                             if (!pilaOperadores.estaVacia()) {
                                 pilaOperadores.pop();
@@ -109,53 +118,38 @@ public class NotacionPolacaServicio {
                         pilaOperadores.push(operador);
                     } else {
                         while (!pilaOperadores.estaVacia() && Helpers.validaciones.retornarValorOperador(operador) <= Helpers.validaciones.retornarValorOperador(pilaOperadores.peek())) {
-                            String operadorSacado = pilaOperadores.pop();
-                            ArbolBinario derecho = arbol.pop();
-                            ArbolBinario izquierdo = arbol.pop();
-                            ArbolBinario nuevoArbol = new ArbolBinario(operadorSacado);
-                            nuevoArbol.setHijoIzquierdo(izquierdo);
-                            nuevoArbol.setHijoDerecho(derecho);
-                            arbol.push(nuevoArbol);
+                            RecorreArbolInterno();
                         }
                         pilaOperadores.push(operador);
                     }
                 }
             }
             while (!pilaOperadores.estaVacia()) {
-                String operadorSacado = pilaOperadores.pop();
-                ArbolBinario derecho = arbol.pop();
-                ArbolBinario izquierdo = arbol.pop();
-                ArbolBinario nuevoArbol = new ArbolBinario(operadorSacado);
-                nuevoArbol.setHijoIzquierdo(izquierdo);
-                nuevoArbol.setHijoDerecho(derecho);
-                arbol.push(nuevoArbol);
+               RecorreArbolInterno();
             }
 
             //arbol.LimpiarPila();
             if (!arbol.estaVacia()) {
                 ArbolBinario arboles = arbol.pop();
                 try {
+                    Lienzo.mostrarArbol(desktopPanel, arboles);
                     double resultado = arboles.evaluar();
-               
-                                      
-                  
-                     arboles.recorrerPreorden(valoresPreOrden);
-                        arboles.recorrerInorden(valoresInOrden);
-                     arboles.recorrerPostorden(valoresPostorden);
+                    arboles.recorrerPreorden(valoresPreOrden);
+                    arboles.recorrerInorden(valoresInOrden);
+                    arboles.recorrerPostorden(valoresPostorden);
                     return resultado;
                 } catch (Exception e) {
                     throw new RuntimeException("Hubo un error al evaluar la expresión: " + e.getMessage());
                 }
             } else {
-               throw new RuntimeException("La pila está vacía, no hay expresión para evaluar.");
+                throw new RuntimeException("La pila está vacía, no hay expresión para evaluar.");
             }
 
-        }else
-        {
+        } else {
             throw new RuntimeException("Expresión no correcta");
         }
     }
-        
+
     public List<String> getValoresPostorden() {
         return valoresPostorden;
     }

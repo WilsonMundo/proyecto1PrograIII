@@ -9,6 +9,7 @@ import javax.swing.JFrame;
 /**
  *
  * @author WilsonMundo
+ * @author Jefferson Lopez
  */
 public class Inicio extends javax.swing.JFrame {
 

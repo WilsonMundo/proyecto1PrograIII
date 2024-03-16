@@ -4,11 +4,14 @@
  */
 package Servicio;
 
+import Modelo.ArbolBinario;
+import Modelo.NodoConNivel;
 import static java.lang.Double.parseDouble;
 
 /**
  *
  * @author WilsonMundo
+ * @author Jefferson Lopez
  */
 public class Helpers {
 
@@ -109,11 +112,12 @@ public class Helpers {
                 case "^":
                     return Math.pow(operando1, operando2);
                 case "√":
-                        return Math.sqrt(operando1);
+                    return Math.sqrt(operando1);
                 default:
                     throw new RuntimeException("Error operador no encontrado");
             }
         }
+
 
     }
 

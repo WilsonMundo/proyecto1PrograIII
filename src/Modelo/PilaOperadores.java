@@ -7,6 +7,7 @@ package Modelo;
 /**
  *
  * @author WilsonMundo
+ * @author Jefferson Lopez
  */
 public class PilaOperadores {
        private Node top;
